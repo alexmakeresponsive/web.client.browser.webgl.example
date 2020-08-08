@@ -1,32 +1,72 @@
-import initWebGL from '/js/initWebGL.js';
-import initShaders from '/js/initShaders.js';
+import initShaderProgram from '/js/initShaderProgram.js';
+import loadShader from '/js/loadShader.js';
 
-import initScene from '/js/initScene.js';
+import initBuffers from '/js/initBuffers.js';
 import drawScene from '/js/drawScene.js';
 
 
-document.body.onload = function() {
-	console.warn("document.body.onload");
-	
-	let gl; // глобальная переменная для контекста WebGL
+document.body.onload = function() {Ï
+    const canvas = document.querySelector('#glcanvas');
+    const gl = canvas.getContext('webgl');
 
-	let canvas = document.getElementById("glcanvas");
+    // If we don't have a GL context, give up now
 
-		 gl = initWebGL(canvas);      // инициализация контекста GL
-	if (!gl) 
-	{
-		returt;
-	}
-	
-	gl.clearColor(0.0, 0.0, 0.0, 1.0);                      // установить в качестве цвета очистки буфера цвета черный, полная непрозрачность
-	gl.enable(gl.DEPTH_TEST);                               // включает использование буфера глубины
-	gl.depthFunc(gl.LEQUAL);                                // определяет работу буфера глубины: более ближние объекты перекрывают дальние
-	gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);      // очистить буфер цвета и буфер глубины.
-	
-	// gl.viewport(0, 0, canvas.width, canvas.height);
-	
-	initShaders(gl);
-	
-	initScene(gl);
-	drawScene(gl);
+    if (!gl) {
+      alert('Unable to initialize WebGL. Your browser or machine may not support it.');
+      return;
+    }
+
+    // Vertex shader program
+
+    const vsSource = `
+      attribute vec4 aVertexPosition;
+
+      uniform mat4 uModelViewMatrix;
+      uniform mat4 uProjectionMatrix;
+
+      void main() {
+        gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
+      }
+    `;
+
+    // Fragment shader program
+
+    const fsSource = `
+      void main() {
+        gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+      }
+    `;
+
+    // Initialize a shader program; this is where all the lighting
+    // for the vertices and so forth is established.
+    const shaderProgram = initShaderProgram(gl, vsSource, fsSource);
+
+    // Collect all the info needed to use the shader program.
+    // Look up which attribute our shader program is using
+    // for aVertexPosition and look up uniform locations.
+    const programInfo = {
+      program: shaderProgram,
+      attribLocations: {
+        vertexPosition: gl.getAttribLocation(shaderProgram, 'aVertexPosition'),
+      },
+      uniformLocations: {
+        projectionMatrix: gl.getUniformLocation(shaderProgram, 'uProjectionMatrix'),
+        modelViewMatrix: gl.getUniformLocation(shaderProgram, 'uModelViewMatrix'),
+      },
+    };
+
+    // Here's where we call the routine that builds all the
+    // objects we'll be drawing.
+    const buffers = initBuffers(gl);
+
+    // Draw the scene
+    		drawScene(gl, programInfo, buffers);
 };
+
+
+
+
+
+
+
+

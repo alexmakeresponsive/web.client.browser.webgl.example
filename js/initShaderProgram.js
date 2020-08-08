@@ -1,3 +1,5 @@
+import loadShader from '/js/loadShader.js';
+
 //
 // Initialize a shader program, so WebGL knows how to draw our data
 //

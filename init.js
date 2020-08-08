@@ -1,11 +1,10 @@
 import initShaderProgram from '/js/initShaderProgram.js';
-import loadShader from '/js/loadShader.js';
 
 import initBuffers from '/js/initBuffers.js';
 import drawScene from '/js/drawScene.js';
 
 
-document.body.onload = function() {Ï
+document.body.onload = function() {
     const canvas = document.querySelector('#glcanvas');
     const gl = canvas.getContext('webgl');
 

@@ -13,12 +13,36 @@
 	      justify-content: center;
 	  }
   </style>
+  
+  
 </head>
 <body>
   <canvas id="glcanvas" width="640" height="480">
       Your browser doesn't appear to support the HTML5 <code>&lt;canvas&gt;</code> element.
     </canvas>
 	
-	<script src="init.js"></script>
+	<script src="sylvester.js"></script>
+	
+	<script src="glUtils.js"></script>
+	<script src="sceneNode.js"></script>
+	
+	<script src="init.js" type="module"></script>
+	
+	<script id="shader-fs" type="x-shader/x-fragment">
+	  void main(void) {
+	    gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+	  }
+	</script>
+	
+	<script id="shader-vs" type="x-shader/x-vertex">
+	  attribute vec3 aVertexPosition;
+
+	  uniform mat4 uMVMatrix;
+	  uniform mat4 uPMatrix;
+  
+	  void main(void) {
+	    gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
+	  }
+	</script>
 </body>
 </html>
